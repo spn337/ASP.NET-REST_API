@@ -1,6 +1,9 @@
 using GardenStore.Server.Data;
+using GardenStore.Server.Data.Abstract;
+using GardenStore.Server.Data.Concrete;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,8 +21,14 @@ namespace GardenStore.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IProductRepository, MockProductRepository>();
+            //додаємо сервіси EntityFramework
+            services.AddDbContext<EFDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllers();
+
+            //services.AddScoped<IProductRepository, MockProductRepository>();
+            services.AddScoped<IProductRepository, EFProductRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,6 +48,12 @@ namespace GardenStore.Server
             {
                 endpoints.MapControllers();
             });
+
+            using(var scope = app.ApplicationServices.CreateScope())
+            {
+                EFDbContext context = scope.ServiceProvider.GetRequiredService<EFDbContext>();
+                Seeder.SeedData(context);
+            }
         }
     }
 }

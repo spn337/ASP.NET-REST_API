@@ -1,4 +1,4 @@
-﻿using GardenStore.Server.Data;
+﻿using GardenStore.Server.Data.Abstract;
 using GardenStore.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

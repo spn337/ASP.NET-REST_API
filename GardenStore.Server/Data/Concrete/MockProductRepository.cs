@@ -1,7 +1,8 @@
-﻿using GardenStore.Server.Models;
+﻿using GardenStore.Server.Data.Abstract;
+using GardenStore.Server.Models;
 using System.Collections.Generic;
 
-namespace GardenStore.Server.Data
+namespace GardenStore.Server.Data.Concrete
 {
     public class MockProductRepository : IProductRepository
     {

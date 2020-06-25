@@ -25,32 +25,28 @@ namespace GardenStore.Server.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ProductReadDto>> GetProducts()
         {
-            var products = _repository.GetAllProducts();
+            var productItems = _repository.GetAllProducts();
 
-            return Ok(_mapper.Map<IEnumerable<ProductReadDto>>(products));
+            return Ok(_mapper.Map<IEnumerable<ProductReadDto>>(productItems));
         }
 
-        //GET api/product/1
+        //GET api/product/{id}
         [HttpGet("{id}", Name = "GetProductById")]
         public ActionResult<ProductReadDto> GetProductById(int id)
         {
-            var product = _repository.GetProductById(id);
-            if (product != null)
+            var productItem = _repository.GetProductById(id);
+            if (productItem == null)
             {
-                return Ok(_mapper.Map<ProductReadDto>(product));
+                return NotFound();
             }
-            return NotFound();
+
+            return Ok(_mapper.Map<ProductReadDto>(productItem));
         }
 
         //POST api/products
         [HttpPost]
         public ActionResult<ProductReadDto> CreateProduct(ProductCreateDto productCreateDto)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var productModel = _mapper.Map<Product>(productCreateDto);
             _repository.CreateProduct(productModel);
             _repository.SaveChanges();
@@ -61,6 +57,23 @@ namespace GardenStore.Server.Controllers
                 routeName: nameof(GetProductById),
                 routeValues: new { productReadDto.Id },
                 value: productReadDto);
+        }
+
+        //PUT api/products/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateProduct(int id, ProductUpdateDto productUpdateDto)
+        {
+            var productModel = _repository.GetProductById(id);
+            if (productModel == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(productUpdateDto, productModel);
+            _repository.UpdateProduct(productModel);
+            _repository.SaveChanges();
+
+            return NoContent();
         }
     }
 }

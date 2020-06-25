@@ -9,5 +9,6 @@ namespace GardenStore.Server.Data.Abstract
         IEnumerable<Product> GetAllProducts();
         Product GetProductById(int id);
         void CreateProduct(Product product);
+        void UpdateProduct(Product product);
     }
 }

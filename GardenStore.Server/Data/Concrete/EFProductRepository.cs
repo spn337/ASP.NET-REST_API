@@ -24,6 +24,10 @@ namespace GardenStore.Server.Data.Concrete
         {
             return _context.Products.FirstOrDefault(p => p.Id == id);
         }
+        public bool SaveChanges()
+        {
+            return (_context.SaveChanges() >= 0);
+        }
         public void CreateProduct(Product product)
         {
             if(product == null)
@@ -31,11 +35,10 @@ namespace GardenStore.Server.Data.Concrete
                 throw new ArgumentNullException(nameof(product));
             }
             _context.Products.Add(product);
-        }
-
-        public bool SaveChanges()
+        }   
+        public void UpdateProduct(Product product)
         {
-            return (_context.SaveChanges() >= 0);
+            //Nothing
         }
     }
 }

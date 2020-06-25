@@ -66,5 +66,10 @@ namespace GardenStore.Server.Data.Concrete
         {
             throw new System.NotImplementedException();
         }
+
+        public void UpdateProduct(Product product)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

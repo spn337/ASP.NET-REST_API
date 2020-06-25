@@ -325,7 +325,7 @@ namespace GardenStore.Server.Data
         }
         private static void SeedProducts(EFDbContext context, Product model)
         {
-            Product product = context.Products.SingleOrDefault(p => p.Name == model.Name);
+            Product product = context.Products.FirstOrDefault(p => p.Name == model.Name);
             if (product == null)
             {
                 product = new Product
@@ -343,7 +343,7 @@ namespace GardenStore.Server.Data
         }
         //private static void SeedCategories(EFDbContext context, Category model)
         //{
-        //    Category category = context.Categories.SingleOrDefault(p => p.Name == model.Name);
+        //    Category category = context.Categories.FirstOrDefault(p => p.Name == model.Name);
         //    if (category == null)
         //    {
         //        category = new Category

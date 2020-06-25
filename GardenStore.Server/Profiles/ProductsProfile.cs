@@ -11,6 +11,7 @@ namespace GardenStore.Server.Profiles
             //Source -> Target
             CreateMap<Product, ProductReadDto>();
             CreateMap<ProductCreateDto, Product>();
+            CreateMap<ProductUpdateDto, Product>();
         }
     }
 }

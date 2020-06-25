@@ -1,3 +1,4 @@
+using AutoMapper;
 using GardenStore.Server.Data;
 using GardenStore.Server.Data.Abstract;
 using GardenStore.Server.Data.Concrete;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace GardenStore.Server
 {
@@ -26,6 +28,9 @@ namespace GardenStore.Server
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+
+            //додаємо сервіси Automapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //services.AddScoped<IProductRepository, MockProductRepository>();
             services.AddScoped<IProductRepository, EFProductRepository>();

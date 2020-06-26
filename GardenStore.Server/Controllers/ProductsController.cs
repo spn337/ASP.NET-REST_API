@@ -83,15 +83,15 @@ namespace GardenStore.Server.Controllers
         public ActionResult PartialProductUpdate(int id, JsonPatchDocument<ProductUpdateDto> patchDoc)
         {
             var productModel = _repository.GetProductById(id);
-            if(productModel == null)
+            if (productModel == null)
             {
                 return NotFound();
             }
 
             var productToPatch = _mapper.Map<ProductUpdateDto>(productModel);
             patchDoc.ApplyTo(productToPatch, ModelState);
-           
-            if(!TryValidateModel(productToPatch))
+
+            if (!TryValidateModel(productToPatch))
             {
                 return ValidationProblem(ModelState);
             }
@@ -100,6 +100,21 @@ namespace GardenStore.Server.Controllers
 
             _repository.UpdateProduct(productModel);
             _repository.SaveChanges();
+            return NoContent();
+        }
+
+        //DELETE api/products/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteProduct(int id)
+        {
+            var productModel = _repository.GetProductById(id);
+            if (productModel == null)
+            {
+                return NotFound();
+            }
+            _repository.DeleteProduct(productModel);
+            _repository.SaveChanges();
+
             return NoContent();
         }
     }

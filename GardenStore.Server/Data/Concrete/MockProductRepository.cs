@@ -11,6 +11,11 @@ namespace GardenStore.Server.Data.Concrete
             throw new System.NotImplementedException();
         }
 
+        public void DeleteProduct(Product product)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public IEnumerable<Product> GetAllProducts()
         {
             return new List<Product>

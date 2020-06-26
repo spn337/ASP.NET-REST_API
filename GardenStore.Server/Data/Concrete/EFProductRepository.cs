@@ -40,5 +40,14 @@ namespace GardenStore.Server.Data.Concrete
         {
             //Nothing
         }
+
+        public void DeleteProduct(Product product)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            _context.Products.Remove(product);
+        }
     }
 }

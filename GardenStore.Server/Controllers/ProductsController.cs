@@ -2,7 +2,9 @@
 using GardenStore.Server.Data.Abstract;
 using GardenStore.Server.DTOs;
 using GardenStore.Server.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 
 namespace GardenStore.Server.Controllers
@@ -73,6 +75,31 @@ namespace GardenStore.Server.Controllers
             _repository.UpdateProduct(productModel);
             _repository.SaveChanges();
 
+            return NoContent();
+        }
+
+        //PATCH api/products/{id}
+        [HttpPatch("{id}")]
+        public ActionResult PartialProductUpdate(int id, JsonPatchDocument<ProductUpdateDto> patchDoc)
+        {
+            var productModel = _repository.GetProductById(id);
+            if(productModel == null)
+            {
+                return NotFound();
+            }
+
+            var productToPatch = _mapper.Map<ProductUpdateDto>(productModel);
+            patchDoc.ApplyTo(productToPatch, ModelState);
+           
+            if(!TryValidateModel(productToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(productToPatch, productModel);
+
+            _repository.UpdateProduct(productModel);
+            _repository.SaveChanges();
             return NoContent();
         }
     }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using System;
 
 namespace GardenStore.Server
@@ -27,7 +28,11 @@ namespace GardenStore.Server
             services.AddDbContext<EFDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(s =>
+                {
+                    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
             //додаємо сервіси Automapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -54,7 +59,7 @@ namespace GardenStore.Server
                 endpoints.MapControllers();
             });
 
-            using(var scope = app.ApplicationServices.CreateScope())
+            using (var scope = app.ApplicationServices.CreateScope())
             {
                 EFDbContext context = scope.ServiceProvider.GetRequiredService<EFDbContext>();
                 Seeder.SeedData(context);

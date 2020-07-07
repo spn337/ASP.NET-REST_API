@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
+using GardenStore.Server.Data;
+using GardenStore.Server.Data.Abstract;
+using GardenStore.Server.Data.Concrete;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
+using System;
 
 namespace GardenStore.Server
 {
@@ -23,7 +24,21 @@ namespace GardenStore.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            //додаємо сервіси EntityFramework
+            services.AddDbContext<EFDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddControllers()
+                .AddNewtonsoftJson(s =>
+                {
+                    s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
+            //додаємо сервіси Automapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //services.AddScoped<IProductRepository, MockProductRepository>();
+            services.AddScoped<IProductRepository, EFProductRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,6 +58,12 @@ namespace GardenStore.Server
             {
                 endpoints.MapControllers();
             });
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                EFDbContext context = scope.ServiceProvider.GetRequiredService<EFDbContext>();
+                Seeder.SeedData(context);
+            }
         }
     }
 }
